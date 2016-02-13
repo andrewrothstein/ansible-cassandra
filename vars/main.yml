@@ -1,0 +1,5 @@
+---
+# vars file for ansible-cassandra
+cassandra_name : 'apache-cassandra-{{cassandra_ver}}'
+cassandra_tgz : '{{cassandra_name}}-bin.tar.gz'
+cassandra_tgz_url : '{{cassandra_mirror}}/{{cassandra_ver}}/{{cassandra_tgz}}'

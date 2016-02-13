@@ -1,0 +1,4 @@
+---
+# defaults file for ansible-cassandra
+cassandra_ver : '3.3'
+cassandra_mirror : 'http://mirrors.advancedhosters.com/apache/cassandra'

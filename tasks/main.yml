@@ -1,0 +1,35 @@
+---
+# tasks file for ansible-cassandra
+- name: download...
+  get_url: >-
+    url={{cassandra_tgz_url}}
+    dest=/tmp/{{cassandra_tgz}}
+    owner=root
+    group=root
+    mode=0644
+
+- name: unarchive...
+  unarchive: >-
+    src=/tmp/{{cassandra_tgz}}
+    dest=/opt
+    owner=root
+    group=root
+    creates=/opt/{{cassandra_name}}
+
+- name: link...
+  file: >-
+    src=/opt/{{cassandra_name}}
+    dest=/opt/cassandra
+    owner=root
+    group=root
+    state=link
+
+- name: add to system path
+  copy: >-
+    src=etc/profile.d/cassandra.sh
+    dest=/etc/profile.d/cassandra.sh
+    owner=root
+    group=root
+    mode=0644
+
+    
