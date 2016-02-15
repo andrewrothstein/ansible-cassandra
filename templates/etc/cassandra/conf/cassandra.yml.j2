@@ -80,10 +80,10 @@ hints_directory: {{cassandra_hints_dir}}
 
 # How often hints should be flushed from the internal buffers to disk.
 # Will *not* trigger fsync.
-hints_flush_period_in_ms: {{hints_flush_period_in_ms}}
+hints_flush_period_in_ms: {{cassandra_hints_flush_period_in_ms}}
 
 # Maximum size for a single hints file, in megabytes.
-max_hints_file_size_in_mb: {{cassandra_hints_max_hints_size_mb}}
+max_hints_file_size_in_mb: {{cassandra_hints_max_file_size_mb}}
 
 # Compression to apply to the hint files. If omitted, hints files
 # will be written uncompressed. LZ4, Snappy, and Deflate compressors
@@ -95,7 +95,7 @@ max_hints_file_size_in_mb: {{cassandra_hints_max_hints_size_mb}}
 
 # Maximum throttle in KBs per second, total. This will be
 # reduced proportionally to the number of nodes in the cluster.
-batchlog_replay_throttle_in_kb: 1024
+batchlog_replay_throttle_in_kb: {{cassandra_batchlog_replay_throttle_in_kb}}
 
 # Authentication backend, implementing IAuthenticator; used to identify users
 # Out of the box, Cassandra provides org.apache.cassandra.auth.{AllowAllAuthenticator,
@@ -106,7 +106,7 @@ batchlog_replay_throttle_in_kb: 1024
 #   users. It keeps usernames and hashed passwords in system_auth.credentials table.
 #   Please increase system_auth keyspace replication factor if you use this authenticator.
 #   If using PasswordAuthenticator, CassandraRoleManager must also be used (see below)
-authenticator: AllowAllAuthenticator
+authenticator: {{cassandra_authenticator}}
 
 # Authorization backend, implementing IAuthorizer; used to limit access/provide permissions
 # Out of the box, Cassandra provides org.apache.cassandra.auth.{AllowAllAuthorizer,
@@ -115,7 +115,7 @@ authenticator: AllowAllAuthenticator
 # - AllowAllAuthorizer allows any action to any user - set it to disable authorization.
 # - CassandraAuthorizer stores permissions in system_auth.permissions table. Please
 #   increase system_auth keyspace replication factor if you use this authorizer.
-authorizer: AllowAllAuthorizer
+authorizer: {{cassandra_authorizer}}
 
 # Part of the Authentication & Authorization backend, implementing IRoleManager; used
 # to maintain grants and memberships between roles.
@@ -126,7 +126,7 @@ authorizer: AllowAllAuthorizer
 #
 # - CassandraRoleManager stores role data in the system_auth keyspace. Please
 #   increase system_auth keyspace replication factor if you use this role manager.
-role_manager: CassandraRoleManager
+role_manager: {{cassandra_role_manager}}
 
 # Validity period for roles cache (fetching permissions can be an
 # expensive operation depending on the authorizer). Granted roles are cached for
@@ -134,7 +134,7 @@ role_manager: CassandraRoleManager
 # here, become eligible for (async) reload.
 # Defaults to 2000, set to 0 to disable.
 # Will be disabled automatically for AllowAllAuthenticator.
-roles_validity_in_ms: 2000
+roles_validity_in_ms: {{cassandra_roles_validity_in_ms}}
 
 # Refresh interval for roles cache (if enabled).
 # After this interval, cache entries become eligible for refresh. Upon next
@@ -148,7 +148,7 @@ roles_validity_in_ms: 2000
 # expensive operation depending on the authorizer, CassandraAuthorizer is
 # one example). Defaults to 2000, set to 0 to disable.
 # Will be disabled automatically for AllowAllAuthorizer.
-permissions_validity_in_ms: 2000
+permissions_validity_in_ms: {{cassandra_permissions_validity_in_ms}}
 
 # Refresh interval for permissions cache (if enabled).
 # After this interval, cache entries become eligible for refresh. Upon next
@@ -168,19 +168,28 @@ permissions_validity_in_ms: 2000
 # compatibility include RandomPartitioner, ByteOrderedPartitioner, and
 # OrderPreservingPartitioner.
 #
-partitioner: org.apache.cassandra.dht.Murmur3Partitioner
+partitioner: {{cassandra_partitioner}}
 
 # Directories where Cassandra should store data on disk.  Cassandra
 # will spread data evenly across them, subject to the granularity of
 # the configured compaction strategy.
 # If not set, the default directory is $CASSANDRA_HOME/data/data.
+{% if cassandra_data_file_directories is defined %}
+data_file_directories:
+{% for dfd in cassandra_data_file_directories %}  - {{dfd}}{% endfor %}
+{% else %}
 # data_file_directories:
 #     - /var/lib/cassandra/data
+{% endif %}
 
 # commit log.  when running on magnetic HDD, this should be a
 # separate spindle than the data directories.
 # If not set, the default directory is $CASSANDRA_HOME/data/commitlog.
+{% if cassandra_commitlog_directory is defined %}
+commitlog_directory: {{cassandra_commitlog_directory}}
+{% else %}
 # commitlog_directory: /var/lib/cassandra/commitlog
+{% endif %}
 
 # policy for data disk failures:
 # die: shut down gossip and client transports and kill the JVM for any fs errors or
@@ -193,7 +202,7 @@ partitioner: org.apache.cassandra.dht.Murmur3Partitioner
 #              remaining available sstables.  This means you WILL see obsolete
 #              data at CL.ONE!
 # ignore: ignore fatal errors and let requests fail, as in pre-1.2 Cassandra
-disk_failure_policy: stop
+disk_failure_policy: {{cassandra_disk_failure_policy}}
 
 # policy for commit disk failures:
 # die: shut down gossip and Thrift and kill the JVM, so the node can be replaced.
@@ -202,7 +211,7 @@ disk_failure_policy: stop
 # stop_commit: shutdown the commit log, letting writes collect but
 #              continuing to service reads, as in pre-2.0.5 Cassandra
 # ignore: ignore fatal errors and let the batches fail
-commit_failure_policy: stop
+commit_failure_policy: {{cassandra_commit_failure_policy}}
 
 # Maximum size of the key cache in memory.
 #
@@ -216,7 +225,11 @@ commit_failure_policy: stop
 # NOTE: if you reduce the size, you may not get you hottest keys loaded on startup.
 #
 # Default value is empty to make it "auto" (min(5% of Heap (in MB), 100MB)). Set to 0 to disable key cache.
+{% if cassandra_key_cache_size_in_mb is not defined or cassandra_key_cache_size_in_mb == 'auto' %}
 key_cache_size_in_mb:
+{% else %}
+key_cache_size_in_mb: {{cassandra_key_cache_size_in_mb}}
+{% endif %}
 
 # Duration in seconds after which Cassandra should
 # save the key cache. Caches are saved to saved_caches_directory as
@@ -227,7 +240,7 @@ key_cache_size_in_mb:
 # has limited use.
 #
 # Default is 14400 or 4 hours.
-key_cache_save_period: 14400
+key_cache_save_period: {{cassandra_key_cache_save_period}}
 
 # Number of keys from the key cache to save
 # Disabled by default, meaning all keys are going to be saved
@@ -248,7 +261,7 @@ key_cache_save_period: 14400
 # headroom for OS block level cache. Do never allow your system to swap.
 #
 # Default value is 0, to disable row caching.
-row_cache_size_in_mb: 0
+row_cache_size_in_mb: {{cassandra_row_cache_size_in_mb}}
 
 # Duration in seconds after which Cassandra should save the row cache.
 # Caches are saved to saved_caches_directory as specified in this configuration file.
@@ -258,11 +271,15 @@ row_cache_size_in_mb: 0
 # has limited use.
 #
 # Default is 0 to disable saving the row cache.
-row_cache_save_period: 0
+row_cache_save_period: {{cassandra_row_cache_save_period}}
 
 # Number of keys from the row cache to save.
 # Specify 0 (which is the default), meaning all keys are going to be saved
+{% if cassandra_row_cache_keys_to_save is defined %}
+row_cache_keys_to_save: {{cassandra_row_cache_keys_to_save}}
+{% else %}
 # row_cache_keys_to_save: 100
+{% endif %}
 
 # Maximum size of the counter cache in memory.
 #
@@ -284,15 +301,23 @@ counter_cache_size_in_mb:
 # specified in this configuration file.
 #
 # Default is 7200 or 2 hours.
-counter_cache_save_period: 7200
+counter_cache_save_period: {{cassandra_counter_cache_save_period}}
 
 # Number of keys from the counter cache to save
 # Disabled by default, meaning all keys are going to be saved
+{% if cassandra_counter_cache_keys_to_save is defined %}
+counter_cache_keys_to_save: {{cassandra_counter_cache_keys_to_save}}
+{% else %}
 # counter_cache_keys_to_save: 100
+{% endif %}
 
 # saved caches
 # If not set, the default directory is $CASSANDRA_HOME/data/saved_caches.
+{% if cassandra_saved_caches_directory is defined %}
+saved_caches_directory: {{cassandra_saved_caches_directory}}
+{% else %}
 # saved_caches_directory: /var/lib/cassandra/saved_caches
+{% endif %}
 
 # commitlog_sync may be either "periodic" or "batch." 
 # 
@@ -309,8 +334,8 @@ counter_cache_save_period: 7200
 # the other option is "periodic" where writes may be acked immediately
 # and the CommitLog is simply synced every commitlog_sync_period_in_ms
 # milliseconds. 
-commitlog_sync: periodic
-commitlog_sync_period_in_ms: 10000
+commitlog_sync: {{cassandra_commitlog_sync}}
+commitlog_sync_period_in_ms: {{cassandra_commitlog_sync_period_in_ms}}
 
 # The size of the individual commitlog file segments.  A commitlog
 # segment may be archived, deleted, or recycled once all the data
@@ -327,7 +352,7 @@ commitlog_sync_period_in_ms: 10000
 # NOTE: If max_mutation_size_in_kb is set explicitly then commitlog_segment_size_in_mb must
 # be set to at least twice the size of max_mutation_size_in_kb / 1024
 #
-commitlog_segment_size_in_mb: 32
+commitlog_segment_size_in_mb: {{cassandra_commitlog_segment_size_in_mb}}
 
 # Compression to apply to the commit log. If omitted, the commit log
 # will be written uncompressed.  LZ4, Snappy, and Deflate compressors
