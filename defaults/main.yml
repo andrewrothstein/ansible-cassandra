@@ -2,3 +2,11 @@
 # defaults file for ansible-cassandra
 cassandra_ver : '3.3'
 cassandra_mirror : 'http://mirrors.advancedhosters.com/apache/cassandra'
+
+cassandra_cluster_name : 'Test Cluster'
+cassandra_num_tokens : 256
+#cassandra_initial_token : '4f442b82-d39a-11e5-a81d-78843cb2df2b'
+
+cassandra_hints_dir : /var/lib/cassandra/hints
+cassandra_hints_flush_period_in_ms : 10000
+cassandra_hints_max_hints_file_size_mb : '128'
