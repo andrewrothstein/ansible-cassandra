@@ -365,10 +365,9 @@ commitlog_segment_size_in_mb: {{cassandra_commitlog_segment_size_in_mb}}
 # any class that implements the SeedProvider interface and has a
 # constructor that takes a Map<String, String> of parameters will do.
 seed_provider:
-{% for (seed_provider, parameters) in cassandra_seeds.iteritems() %}  - class_name: {{seed_provider}}
+  - class_name: org.apache.cassandra.locator.SimpleSeedProvider
     parameters:
-      - seeds: "{% for p in parameters %}{{p}}{% if not loop.last %},{% endif %}{% endfor %}"
-{% endfor %}
+      - seeds: "{% if groups['apache-cassandra'] is defined %}{% for host in groups['apache-cassandra'] %}{{hostvars[host]['ansible_' + cassandra_listen_network_interface]['ipv4']['address']}}{% if not loop.last %},{% endif %}{% endfor %}{% else %}127.0.0.1{% endif %}"
 
 # For workloads with more data than can fit in memory, Cassandra's
 # bottleneck will be reads that need to fetch data from
@@ -498,7 +497,6 @@ ssl_storage_port: {{cassandra_ssl_storage_port}}
 # address will be used. If true the first ipv6 address will be used. Defaults to false preferring
 # ipv4. If there is only one address it will be selected regardless of ipv4/ipv6.
 listen_interface: {{cassandra_listen_network_interface}}
-listen_address: {{ hostvars[inventory_hostname]['ansible_' + cassandra_listen_network_interface]['ipv4']['address']}}
 {% if cassandra_listen_interface_prefer_ipv6 is defined %}
 listen_interface_prefer_ipv6: {{cassandra_listen_interface_prefer_ipv6}}
 {% endif %}
@@ -577,7 +575,6 @@ start_rpc: {{cassandra_start_rpc}}
 # address will be used. If true the first ipv6 address will be used. Defaults to false preferring
 # ipv4. If there is only one address it will be selected regardless of ipv4/ipv6.
 rpc_interface: {{cassandra_rpc_network_interface}}
-rpc_address: {{ hostvars[inventory_hostname]['ansible_' + cassandra_rpc_network_interface]['ipv4']['address'] }}
 {% if cassandra_rpc_broadcast_address is defined %}rpc_interface_prefer_ipv6: {{cassandra_rpc_broadcast_address}}
 {% else %}# rpc_interface_prefer_ipv6: false{% endif %}
 

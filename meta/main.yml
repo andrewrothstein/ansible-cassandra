@@ -20,4 +20,6 @@ galaxy_info:
 
 dependencies:
   - andrewrothstein.unarchive-deps
+  - andrewrothstein.java
+  
   

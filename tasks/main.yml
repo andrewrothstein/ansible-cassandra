@@ -33,10 +33,22 @@
     group=root
     mode=0644
 
-- template: >-
-    src=opt/apache-cassandra/conf/cassandra.yml.j2
-    dest=/opt/{{cassandra_name}}/conf/cassandra.yml
+- name: configure...
+  template: >-
+    src=opt/apache-cassandra/conf/cassandra.yaml.j2
+    dest=/opt/{{cassandra_name}}/conf/cassandra.yaml
     owner=root
     group=root
     mode=0644
     
+- name: install systemd cassandra.service unit
+  template: >-
+    src=usr/lib/systemd/system/apache-cassandra.service.j2
+    dest=/usr/lib/systemd/system/apache-cassandra.service
+    owner=root
+    group=root
+    mode=0644
+
+- name: launch apache-cassandra
+  service: name=apache-cassandra enabled=yes state=started
+
