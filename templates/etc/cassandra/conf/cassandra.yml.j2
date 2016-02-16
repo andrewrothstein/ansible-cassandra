@@ -7,7 +7,7 @@
 
 # The name of the cluster. This is mainly used to prevent machines in
 # one logical cluster from joining another.
-cluster_name: '{{cassandra_cluster_name}}e'
+cluster_name: '{{cassandra_cluster_name}}'
 
 # This defines the number of tokens randomly assigned to this node on the ring
 # The more tokens, relative to other nodes, the larger the proportion of data
@@ -22,7 +22,7 @@ cluster_name: '{{cassandra_cluster_name}}e'
 #
 # If you already have a cluster with 1 token per node, and wish to migrate to 
 # multiple tokens per node, see http://wiki.apache.org/cassandra/Operations
-num_tokens: {{cassandra_num_tokens}}xs
+num_tokens: {{cassandra_num_tokens}}
 
 # Triggers automatic allocation of num_tokens tokens for this node. The allocation
 # algorithm attempts to choose tokens in a way that optimizes replicated x1load over
@@ -365,15 +365,10 @@ commitlog_segment_size_in_mb: {{cassandra_commitlog_segment_size_in_mb}}
 # any class that implements the SeedProvider interface and has a
 # constructor that takes a Map<String, String> of parameters will do.
 seed_provider:
-    # Addresses of hosts that are deemed contact points. 
-    # Cassandra nodes use this list of hosts to find each other and learn
-    # the topology of the ring.  You must change this if you are running
-    # multiple nodes!
-    - class_name: org.apache.cassandra.locator.SimpleSeedProvider
-      parameters:
-          # seeds is actually a comma-delimited list of addresses.
-          # Ex: "<ip1>,<ip2>,<ip3>"
-          - seeds: "127.0.0.1"
+{% for (seed_provider, parameters) in cassandra_seeds %}  - class_name: {{seed_provider}}
+    parameters:
+      - seeds: "{% for p in parameters %}{{p}}{% if not loop.last %},{% endif %}{% endfor %}"
+{% endfor %}
 
 # For workloads with more data than can fit in memory, Cassandra's
 # bottleneck will be reads that need to fetch data from
@@ -386,13 +381,13 @@ seed_provider:
 # On the other hand, since writes are almost never IO bound, the ideal
 # number of "concurrent_writes" is dependent on the number of cores in
 # your system; (8 * number_of_cores) is a good rule of thumb.
-concurrent_reads: 32
-concurrent_writes: 32
-concurrent_counter_writes: 32
+concurrent_reads: {{cassandra_concurrent_reads}}
+concurrent_writes: {{cassandra_concurrent_writes}}
+concurrent_counter_writes: {{cassandra_concurrent_counter_writes}}
 
 # For materialized view writes, as there is a read involved, so this should
 # be limited by the less of concurrent reads or concurrent writes.
-concurrent_materialized_view_writes: 32
+concurrent_materialized_view_writes: {{cassandra_concurrent_materialized_view_writes}}
 
 # Maximum memory to use for pooling sstable buffers. Defaults to the smaller
 # of 1/4 of heap or 512MB. This pool is allocated off-heap, so is in addition
@@ -431,7 +426,7 @@ concurrent_materialized_view_writes: 32
 # Options are:
 #   heap_buffers:    on heap nio buffers
 #   offheap_buffers: off heap (direct) nio buffers
-memtable_allocation_type: heap_buffers
+memtable_allocation_type: {{cassandra_memtable_allocation_type}}
 
 # Total space to use for commit logs on disk.
 #
@@ -466,24 +461,24 @@ index_summary_capacity_in_mb:
 # periodically to redistribute memory from the fixed-size pool to sstables
 # proportional their recent read rates.  Setting to -1 will disable this
 # process, leaving existing index summaries at their current sampling level.
-index_summary_resize_interval_in_minutes: 60
+index_summary_resize_interval_in_minutes: {{cassandra_index_summary_resize_interval_in_minutes}}
 
 # Whether to, when doing sequential writing, fsync() at intervals in
 # order to force the operating system to flush the dirty
 # buffers. Enable this to avoid sudden dirty buffer flushing from
 # impacting read latencies. Almost always a good idea on SSDs; not
 # necessarily on platters.
-trickle_fsync: false
-trickle_fsync_interval_in_kb: 10240
+trickle_fsync: {{cassandra_trickle_fsync}}
+trickle_fsync_interval_in_kb: {{cassandra_trickle_fsync_interval_in_kb}}
 
 # TCP port, for commands and data
 # For security reasons, you should not expose this port to the internet.  Firewall it if needed.
-storage_port: 7000
+storage_port: {{cassandra_storage_port}}
 
 # SSL port, for encrypted communication.  Unused unless enabled in
 # encryption_options
 # For security reasons, you should not expose this port to the internet.  Firewall it if needed.
-ssl_storage_port: 7001
+ssl_storage_port: {{cassandra_ssl_storage_port}}
 
 # Address or interface to bind to and tell other Cassandra nodes to connect to.
 # You _must_ change this if you want multiple nodes to be able to communicate!
@@ -502,13 +497,16 @@ ssl_storage_port: 7001
 # you can specify which should be chosen using listen_interface_prefer_ipv6. If false the first ipv4
 # address will be used. If true the first ipv6 address will be used. Defaults to false preferring
 # ipv4. If there is only one address it will be selected regardless of ipv4/ipv6.
-listen_address: localhost
-# listen_interface: eth0
-# listen_interface_prefer_ipv6: false
+listen_interface: {{cassandra_listen_network_interface}}
+listen_address: {{ hostvargs[inventory_hostname]['ansible_' + cassandra_listen_network_interface]['ipv4']['address']}}
+{% if cassandra_listen_interface_prefer_ipv6 is defined %}
+listen_interface_prefer_ipv6: {{cassandra_listen_interface_prefer_ipv6}}
+{% endif %}
 
 # Address to broadcast to other Cassandra nodes
 # Leaving this blank will set it to the same value as listen_address
-# broadcast_address: 1.2.3.4
+{% if cassandra_broadcast_address is defined %}broadcast_address: {{cassandra_broadcast_address}}
+{% else %}# broadcast_address: 1.2.3.4{% endif %}
 
 # When using multiple physical network interfaces, set this
 # to true to listen on broadcast_address in addition to
@@ -525,10 +523,12 @@ listen_address: localhost
 # Whether to start the native transport server.
 # Please note that the address on which the native transport is bound is the
 # same as the rpc_address. The port however is different and specified below.
-start_native_transport: true
+start_native_transport: {{cassandra_start_native_transport}}
+
 # port for the CQL native transport to listen for clients on
 # For security reasons, you should not expose this port to the internet.  Firewall it if needed.
-native_transport_port: 9042
+native_transport_port: {{cassandra_native_transport_port}}
+
 # Enabling native transport encryption in client_encryption_options allows you to either use
 # encryption for the standard port or to use a dedicated, additional port along with the unencrypted
 # standard native_transport_port.
@@ -556,7 +556,7 @@ native_transport_port: 9042
 # native_transport_max_concurrent_connections_per_ip: -1
 
 # Whether to start the thrift rpc server.
-start_rpc: false
+start_rpc: {{cassandra_start_rpc}}
 
 # The address or interface to bind the Thrift RPC service and native transport
 # server to.
@@ -576,21 +576,23 @@ start_rpc: false
 # you can specify which should be chosen using rpc_interface_prefer_ipv6. If false the first ipv4
 # address will be used. If true the first ipv6 address will be used. Defaults to false preferring
 # ipv4. If there is only one address it will be selected regardless of ipv4/ipv6.
-rpc_address: localhost
-# rpc_interface: eth1
-# rpc_interface_prefer_ipv6: false
+rpc_interface: {{cassandra_rpt_network_interface}}
+rpc_address: {{ hostvars[inventory_hostname]['ansible_' + cassandra_rpc_interface]['ipv4']['address'] }}
+{% if cassandra_rpc_broadcast_address is defined %}rpc_interface_prefer_ipv6: {{cassandra_rpc_broadcast_address}}
+{% else %}# rpc_interface_prefer_ipv6: false{% endif %}
 
 # port for Thrift to listen for clients on
-rpc_port: 9160
+rpc_port: {{cassandra_rpc_port}}
 
 # RPC address to broadcast to drivers and other Cassandra nodes. This cannot
 # be set to 0.0.0.0. If left blank, this will be set to the value of
 # rpc_address. If rpc_address is set to 0.0.0.0, broadcast_rpc_address must
 # be set.
-# broadcast_rpc_address: 1.2.3.4
+{% if cassandra_rpc_broadcast_address is defined %}broadcast_rpc_address: {{cassandra_rpc_broadcast_address}}
+{% else %}# broadcast_rpc_address: 1.2.3.4{% endif %}
 
 # enable or disable keepalive on rpc/native connections
-rpc_keepalive: true
+rpc_keepalive: {{cassandra_rpc_keepalive}}
 
 # Cassandra provides two out-of-the-box options for the RPC Server:
 #
@@ -610,7 +612,7 @@ rpc_keepalive: true
 #
 # Alternatively,  can provide your own RPC server by providing the fully-qualified class name
 # of an o.a.c.t.TServerFactory that can create an instance of it.
-rpc_server_type: sync
+rpc_server_type: {{cassandra_rpc_server_type}}
 
 # Uncomment rpc_min|max_thread to set request pool size limits.
 #
@@ -642,25 +644,25 @@ rpc_server_type: sync
 # internode_recv_buff_size_in_bytes:
 
 # Frame size for thrift (maximum message length).
-thrift_framed_transport_size_in_mb: 15
+thrift_framed_transport_size_in_mb: {{cassandra_thrift_framed_transport_size_in_mb}}
 
 # Set to true to have Cassandra create a hard link to each sstable
 # flushed or streamed locally in a backups/ subdirectory of the
 # keyspace data.  Removing these links is the operator's
 # responsibility.
-incremental_backups: false
+incremental_backups: {{cassandra_incremental_backups}}
 
 # Whether or not to take a snapshot before each compaction.  Be
 # careful using this option, since Cassandra won't clean up the
 # snapshots for you.  Mostly useful if you're paranoid when there
 # is a data format change.
-snapshot_before_compaction: false
+snapshot_before_compaction: {{cassandra_snapshot_before_compaction}}
 
 # Whether or not a snapshot is taken of the data before keyspace truncation
 # or dropping of column families. The STRONGLY advised default of true 
 # should be used to provide data safety. If you set this flag to false, you will
 # lose data on truncation or drop.
-auto_snapshot: true
+auto_snapshot: {{cassandra_auto_snapshot}}
 
 # When executing a scan, within or across a partition, we need to keep the
 # tombstones seen in memory so we can return them to the coordinator, which
@@ -683,15 +685,15 @@ tombstone_failure_threshold: 100000
 #   2) but, Cassandra will keep the collation index in memory for hot
 #      rows (as part of the key cache), so a larger granularity means
 #      you can cache more hot rows
-column_index_size_in_kb: 64
+column_index_size_in_kb: {{cassandra_column_index_size_in_kb}}
 
 
 # Log WARN on any batch size exceeding this value. 5kb per batch by default.
 # Caution should be taken on increasing the size of this threshold as it can lead to node instability.
-batch_size_warn_threshold_in_kb: 5
+batch_size_warn_threshold_in_kb: {{cassandra_batch_size_warn_threshold_in_kb}}
 
 # Fail any batch exceeding this value. 50kb (10x warn threshold) by default.
-batch_size_fail_threshold_in_kb: 50
+batch_size_fail_threshold_in_kb: {{cassandra_batch_size_fail_threshold_in_kb}}
 
 # Number of simultaneous compactions to allow, NOT including
 # validation "compactions" for anti-entropy repair.  Simultaneous
@@ -715,16 +717,16 @@ batch_size_fail_threshold_in_kb: 50
 # 16 to 32 times the rate you are inserting data is more than sufficient.
 # Setting this to 0 disables throttling. Note that this account for all types
 # of compaction, including validation compaction.
-compaction_throughput_mb_per_sec: 16
+compaction_throughput_mb_per_sec: {{cassandra_compaction_throughput_mb_per_sec}}
 
 # Log a warning when compacting partitions larger than this value
-compaction_large_partition_warning_threshold_mb: 100
+compaction_large_partition_warning_threshold_mb: {{cassandra_compaction_large_partition_warning_threshold_mb}}
 
 # When compacting, the replacement sstable(s) can be opened before they
 # are completely written, and used in place of the prior sstables for
 # any range that has been written. This helps to smoothly transfer reads 
 # between the sstables, reducing page cache churn and keeping hot rows hot
-sstable_preemptive_open_interval_in_mb: 50
+sstable_preemptive_open_interval_in_mb: {{cassandra_sstable_preemptive_open_interval_in_mb}}
 
 # Throttles all outbound streaming file transfers on this node to the
 # given total throughput in Mbps. This is necessary because Cassandra does
@@ -741,22 +743,22 @@ sstable_preemptive_open_interval_in_mb: 50
 # inter_dc_stream_throughput_outbound_megabits_per_sec: 200
 
 # How long the coordinator should wait for read operations to complete
-read_request_timeout_in_ms: 5000
+read_request_timeout_in_ms: {{cassandra_read_request_timeout_in_ms}}
 # How long the coordinator should wait for seq or index scans to complete
-range_request_timeout_in_ms: 10000
+range_request_timeout_in_ms: {{cassandra_range_Request_timeout_in_ms}}
 # How long the coordinator should wait for writes to complete
-write_request_timeout_in_ms: 2000
+write_request_timeout_in_ms: {{cassandra_write_request_timeout_in_ms}}
 # How long the coordinator should wait for counter writes to complete
-counter_write_request_timeout_in_ms: 5000
+counter_write_request_timeout_in_ms: {{cassandra_counter_write_request_timeout_in_ms}}
 # How long a coordinator should continue to retry a CAS operation
 # that contends with other proposals for the same row
-cas_contention_timeout_in_ms: 1000
+cas_contention_timeout_in_ms: {{cassandra_cas_contention_timeout_in_ms}}
 # How long the coordinator should wait for truncates to complete
 # (This can be much longer, because unless auto_snapshot is disabled
 # we need to flush first so we can snapshot before removing the data.)
-truncate_request_timeout_in_ms: 60000
+truncate_request_timeout_in_ms: {{cassandra_truncate_request_timeout_in_ms}}
 # The default timeout for other, miscellaneous operations
-request_timeout_in_ms: 10000
+request_timeout_in_ms: {{cassandra_request_timeout_in_ms}}
 
 # Enable operation timeout information exchange between nodes to accurately
 # measure request timeouts.  If disabled, replicas will assume that requests
@@ -766,7 +768,7 @@ request_timeout_in_ms: 10000
 #
 # Warning: before enabling this property make sure to ntp is installed
 # and the times are synchronized between the nodes.
-cross_node_timeout: false
+cross_node_timeout: {{cassandra_cross_node_timeout}}
 
 # Enable socket timeout for streaming operation.
 # When a timeout occurs during streaming, streaming is retried from the start
@@ -832,14 +834,14 @@ cross_node_timeout: false
 #
 # You can use a custom Snitch by setting this to the full class name
 # of the snitch, which will be assumed to be on your classpath.
-endpoint_snitch: SimpleSnitch
+endpoint_snitch: {{cassandra_endpoint_snitch}}
 
 # controls how often to perform the more expensive part of host score
 # calculation
-dynamic_snitch_update_interval_in_ms: 100 
+dynamic_snitch_update_interval_in_ms: {{cassandra_dynamic_snitch_update_interval_in_ms}}
 # controls how often to reset all host scores, allowing a bad host to
 # possibly recover
-dynamic_snitch_reset_interval_in_ms: 600000
+dynamic_snitch_reset_interval_in_ms: {{cassandra_dynamic_snitch_reset_interval_in_ms}}
 # if set greater than zero and read_repair_chance is < 1.0, this will allow
 # 'pinning' of replicas to hosts in order to increase cache capacity.
 # The badness threshold will control how much worse the pinned host has to be
@@ -847,7 +849,7 @@ dynamic_snitch_reset_interval_in_ms: 600000
 # expressed as a double which represents a percentage.  Thus, a value of
 # 0.2 means Cassandra would continue to prefer the static snitch values
 # until the pinned host was 20% worse than the fastest.
-dynamic_snitch_badness_threshold: 0.1
+dynamic_snitch_badness_threshold: {{cassandra_dynamic_snitch_badness_threshold}}
 
 # request_scheduler -- Set this to a class that implements
 # RequestScheduler, which will schedule incoming client requests
@@ -860,7 +862,7 @@ dynamic_snitch_badness_threshold: 0.1
 # client requests to a node with a separate queue for each
 # request_scheduler_id. The scheduler is further customized by
 # request_scheduler_options as described below.
-request_scheduler: org.apache.cassandra.scheduler.NoScheduler
+request_scheduler: {{cassandra_request_scheduler}}
 
 # Scheduler Options vary based on the type of scheduler
 # NoScheduler - Has no options
@@ -939,36 +941,36 @@ client_encryption_options:
 # can be:  all  - all traffic is compressed
 #          dc   - traffic between different datacenters is compressed
 #          none - nothing is compressed.
-internode_compression: all
+internode_compression: {{cassandra_internode_compression}}
 
 # Enable or disable tcp_nodelay for inter-dc communication.
 # Disabling it will result in larger (but fewer) network packets being sent,
 # reducing overhead from the TCP protocol itself, at the cost of increasing
 # latency if you block for cross-datacenter responses.
-inter_dc_tcp_nodelay: false
+inter_dc_tcp_nodelay: {{cassandra_inter_dc_tcp_nodeplay}}
 
 # TTL for different trace types used during logging of the repair process.
-tracetype_query_ttl: 86400
-tracetype_repair_ttl: 604800
+tracetype_query_ttl: {{cassandra_tracetype_query_ttl}}
+tracetype_repair_ttl: {{cassandra_tracetype_repair_ttl}}
 
 # GC Pauses greater than gc_warn_threshold_in_ms will be logged at WARN level
 # Adjust the threshold based on your application throughput requirement
 # By default, Cassandra logs GC Pauses greater than 200 ms at INFO level
-gc_warn_threshold_in_ms: 1000
+gc_warn_threshold_in_ms: {{cassandra_gc_warn_threshold_in_ms}}
 
 # UDFs (user defined functions) are disabled by default.
 # As of Cassandra 3.0 there is a sandbox in place that should prevent execution of evil code.
-enable_user_defined_functions: false
+enable_user_defined_functions: {{cassandra_enable_user_defined_functions}}
 
 # Enables scripted UDFs (JavaScript UDFs).
 # Java UDFs are always enabled, if enable_user_defined_functions is true.
 # Enable this option to be able to use UDFs with "language javascript" or any custom JSR-223 provider.
 # This option has no effect, if enable_user_defined_functions is false.
-enable_scripted_user_defined_functions: false
+enable_scripted_user_defined_functions: {{cassandra_enable_scripted_user_defined_functions}}
 
 # The default Windows kernel timer and scheduling resolution is 15.6ms for power conservation.
 # Lowering this value on Windows can provide much tighter latency and better throughput, however
 # some virtualized environments may see a negative performance impact from changing this setting
 # below their system default. The sysinternals 'clockres' tool can confirm your system's default
 # setting.
-windows_timer_interval: 1
+windows_timer_interval: {{cassandra_windows_timer_interval}}

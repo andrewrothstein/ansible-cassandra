@@ -44,5 +44,78 @@ cassandra_commitlog_sync: periodic
 cassandra_commitlog_sync_period_in_ms: 10000
 cassandra_commitlog_segment_size_in_mb: 32
 
+cassandra_seeds:
+  'org.apache.cassandra.locator.SimpleSeedProvider' :
+    - '127.0.0.1'
 
+cassandra_concurrent_reads: 32
+cassandra_concurrent_writes: 32
+cassandra_concurrent_counter_writes: 32
+cassandra_concurrent_materialized_view_writes: 32
+
+cassandra_memtable_allocation_type: heap_buffers
+cassandra_index_summary_resize_interval_in_minutes: 60
+
+cassandra_trickle_fsync: false
+cassandra_trickle_fsync_interval_in_kb: 10240
+
+cassandra_storage_port: 7000
+cassandra_ssl_storage_port: 7001
+
+cassandra_listen_network_interface: eth0
+#cassandra_listen_interface_prefer_ipv6: false
+#cassandra_broadcast_address: 1.2.3.4
+
+cassandra_start_native_transport: 'true'
+cassandra_native_transport_port: 9042
+
+cassandra_start_rpc: 'false'
+cassandra_rpc_port: 9160
+cassandra_rpc_network_interface: eth0
+#cassandra_rpc_interface_prefer_ipv6: 'false'
+#cassandra_rpc_broadcast_address: 1.2.3.4
+cassandra_rpc_keepalive: 'true'
+cassandra_rpc_server_type: sync
+
+cassandra_thrift_framed_transport_size_in_mb: 15
+
+cassandra_incremental_backups: 'false'
+cassandra_snapshot_before_compaction: 'false'
+cassandra_auto_snapshot: 'true'
+
+cassandra_column_index_size_in_kb: 64
+cassandra_batch_size_warn_threshold_in_kb: 5
+cassandra_batch_size_fail_threshold_in_kb: 50
+
+cassandra_compaction_throughput_mb_per_sec: 16
+cassandra_compaction_large_partition_warning_threshold_mb: 100
+cassandra_sstabl_preemptive_open_interval_in_mb: 50
+
+cassandra_read_request_timeout_in_ms: 5000
+cassandra_range_request_timeout_in_ms: 10000
+cassandra_write_request_timeout_in_ms: 2000
+cassandra_counter_write_request_timeout_in_ms: 5000
+cassandra_cas_contention_timeout_in_ms: 1000
+cassandra_truncate_request_timeout_in_ms: 60000
+cassandra_request_timeout_in_ms: 10000
+
+cassandra_cross_node_timeout: 'false'
+
+cassandra_endpoint_snitch: SimpleSnitch
+cassandra_dynamic_snitch_reset_interval_in_ms: 100
+cassandra_dynamic_snitch_reset_interval_in_ms: 600000
+cassandra_dynamic_snitch_badness_threshold: 0.1
+
+cassandra_request_scheduler: 'org.apache.cassandra.scheduler.NoScheduler'
+cassandra_internode_compression: all
+cassandra_inter_dc_tcp_nodelay: false
+
+cassandra_tracetype_query_ttl: 86400
+cassandra_tracetype_repair_ttl: 604800
+
+cassandra_gc_warn_threshold_in_ms: 1000
+cassandra_enable_user_defined_functions: 'false'
+cassandra_enable_scripted_user_defined_functions: 'false'
+
+cassandra_windows_timer_interval: 1
 

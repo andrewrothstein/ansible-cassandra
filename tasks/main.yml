@@ -10,6 +10,7 @@
 
 - name: unarchive...
   unarchive: >-
+    copy=no
     src=/tmp/{{cassandra_tgz}}
     dest=/opt
     owner=root
@@ -32,4 +33,10 @@
     group=root
     mode=0644
 
+- template: >-
+    src=etc/cassandra/conf/cassandra.yml.j2
+    dest=/etc/cassandra/conf/cassandra.yml
+    owner=root
+    group=root
+    mode=0644
     
