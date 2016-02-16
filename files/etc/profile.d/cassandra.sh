@@ -1,1 +1,1 @@
-export PATH=$PATH:/opt/cassandra/bin
+export PATH=$PATH:/opt/apache-cassandra/bin

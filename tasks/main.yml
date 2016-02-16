@@ -20,7 +20,7 @@
 - name: link...
   file: >-
     src=/opt/{{cassandra_name}}
-    dest=/opt/cassandra
+    dest=/opt/apache-cassandra
     owner=root
     group=root
     state=link
@@ -34,8 +34,8 @@
     mode=0644
 
 - template: >-
-    src=etc/cassandra/conf/cassandra.yml.j2
-    dest=/etc/cassandra/conf/cassandra.yml
+    src=opt/apache-cassandra/conf/cassandra.yml.j2
+    dest=/opt/{{cassandra_name}}/conf/cassandra.yml
     owner=root
     group=root
     mode=0644

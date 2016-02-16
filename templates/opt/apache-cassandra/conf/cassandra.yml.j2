@@ -365,7 +365,7 @@ commitlog_segment_size_in_mb: {{cassandra_commitlog_segment_size_in_mb}}
 # any class that implements the SeedProvider interface and has a
 # constructor that takes a Map<String, String> of parameters will do.
 seed_provider:
-{% for (seed_provider, parameters) in cassandra_seeds %}  - class_name: {{seed_provider}}
+{% for (seed_provider, parameters) in cassandra_seeds.iteritems() %}  - class_name: {{seed_provider}}
     parameters:
       - seeds: "{% for p in parameters %}{{p}}{% if not loop.last %},{% endif %}{% endfor %}"
 {% endfor %}
@@ -498,7 +498,7 @@ ssl_storage_port: {{cassandra_ssl_storage_port}}
 # address will be used. If true the first ipv6 address will be used. Defaults to false preferring
 # ipv4. If there is only one address it will be selected regardless of ipv4/ipv6.
 listen_interface: {{cassandra_listen_network_interface}}
-listen_address: {{ hostvargs[inventory_hostname]['ansible_' + cassandra_listen_network_interface]['ipv4']['address']}}
+listen_address: {{ hostvars[inventory_hostname]['ansible_' + cassandra_listen_network_interface]['ipv4']['address']}}
 {% if cassandra_listen_interface_prefer_ipv6 is defined %}
 listen_interface_prefer_ipv6: {{cassandra_listen_interface_prefer_ipv6}}
 {% endif %}
@@ -576,8 +576,8 @@ start_rpc: {{cassandra_start_rpc}}
 # you can specify which should be chosen using rpc_interface_prefer_ipv6. If false the first ipv4
 # address will be used. If true the first ipv6 address will be used. Defaults to false preferring
 # ipv4. If there is only one address it will be selected regardless of ipv4/ipv6.
-rpc_interface: {{cassandra_rpt_network_interface}}
-rpc_address: {{ hostvars[inventory_hostname]['ansible_' + cassandra_rpc_interface]['ipv4']['address'] }}
+rpc_interface: {{cassandra_rpc_network_interface}}
+rpc_address: {{ hostvars[inventory_hostname]['ansible_' + cassandra_rpc_network_interface]['ipv4']['address'] }}
 {% if cassandra_rpc_broadcast_address is defined %}rpc_interface_prefer_ipv6: {{cassandra_rpc_broadcast_address}}
 {% else %}# rpc_interface_prefer_ipv6: false{% endif %}
 
@@ -745,7 +745,7 @@ sstable_preemptive_open_interval_in_mb: {{cassandra_sstable_preemptive_open_inte
 # How long the coordinator should wait for read operations to complete
 read_request_timeout_in_ms: {{cassandra_read_request_timeout_in_ms}}
 # How long the coordinator should wait for seq or index scans to complete
-range_request_timeout_in_ms: {{cassandra_range_Request_timeout_in_ms}}
+range_request_timeout_in_ms: {{cassandra_range_request_timeout_in_ms}}
 # How long the coordinator should wait for writes to complete
 write_request_timeout_in_ms: {{cassandra_write_request_timeout_in_ms}}
 # How long the coordinator should wait for counter writes to complete
@@ -947,7 +947,7 @@ internode_compression: {{cassandra_internode_compression}}
 # Disabling it will result in larger (but fewer) network packets being sent,
 # reducing overhead from the TCP protocol itself, at the cost of increasing
 # latency if you block for cross-datacenter responses.
-inter_dc_tcp_nodelay: {{cassandra_inter_dc_tcp_nodeplay}}
+inter_dc_tcp_nodelay: {{cassandra_inter_dc_tcp_nodelay}}
 
 # TTL for different trace types used during logging of the repair process.
 tracetype_query_ttl: {{cassandra_tracetype_query_ttl}}

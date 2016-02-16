@@ -89,7 +89,7 @@ cassandra_batch_size_fail_threshold_in_kb: 50
 
 cassandra_compaction_throughput_mb_per_sec: 16
 cassandra_compaction_large_partition_warning_threshold_mb: 100
-cassandra_sstabl_preemptive_open_interval_in_mb: 50
+cassandra_sstable_preemptive_open_interval_in_mb: 50
 
 cassandra_read_request_timeout_in_ms: 5000
 cassandra_range_request_timeout_in_ms: 10000
@@ -102,7 +102,7 @@ cassandra_request_timeout_in_ms: 10000
 cassandra_cross_node_timeout: 'false'
 
 cassandra_endpoint_snitch: SimpleSnitch
-cassandra_dynamic_snitch_reset_interval_in_ms: 100
+cassandra_dynamic_snitch_update_interval_in_ms: 100
 cassandra_dynamic_snitch_reset_interval_in_ms: 600000
 cassandra_dynamic_snitch_badness_threshold: 0.1
 
