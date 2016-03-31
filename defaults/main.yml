@@ -58,7 +58,8 @@ cassandra_trickle_fsync_interval_in_kb: 10240
 cassandra_storage_port: 7000
 cassandra_ssl_storage_port: 7001
 
-cassandra_listen_network_interface: eth0
+cassandra_listen_network_address: ''
+cassandra_listen_network_interface: '{{ ansible_default_ipv4.interface }}'
 #cassandra_listen_interface_prefer_ipv6: false
 #cassandra_broadcast_address: 1.2.3.4
 
@@ -67,7 +68,8 @@ cassandra_native_transport_port: 9042
 
 cassandra_start_rpc: 'false'
 cassandra_rpc_port: 9160
-cassandra_rpc_network_interface: eth0
+cassandra_rpc_network_address: ''
+cassandra_rpc_network_interface: '{{ ansible_default_ipv4.interface }}'
 #cassandra_rpc_interface_prefer_ipv6: 'false'
 #cassandra_rpc_broadcast_address: 1.2.3.4
 cassandra_rpc_keepalive: 'true'

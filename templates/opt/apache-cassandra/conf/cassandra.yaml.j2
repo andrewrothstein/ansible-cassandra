@@ -496,7 +496,11 @@ ssl_storage_port: {{cassandra_ssl_storage_port}}
 # you can specify which should be chosen using listen_interface_prefer_ipv6. If false the first ipv4
 # address will be used. If true the first ipv6 address will be used. Defaults to false preferring
 # ipv4. If there is only one address it will be selected regardless of ipv4/ipv6.
+{% if cassandra_listen_network_address != '' %}
+listen_address: {{cassandra_listen_network_address}}
+{% else %}
 listen_interface: {{cassandra_listen_network_interface}}
+{% endif %}
 {% if cassandra_listen_interface_prefer_ipv6 is defined %}
 listen_interface_prefer_ipv6: {{cassandra_listen_interface_prefer_ipv6}}
 {% endif %}
@@ -574,7 +578,11 @@ start_rpc: {{cassandra_start_rpc}}
 # you can specify which should be chosen using rpc_interface_prefer_ipv6. If false the first ipv4
 # address will be used. If true the first ipv6 address will be used. Defaults to false preferring
 # ipv4. If there is only one address it will be selected regardless of ipv4/ipv6.
+{% if cassandra_rpc_network_address != '' %}
+rpc_address: {{cassandra_rpc_network_address}}
+{% else %}
 rpc_interface: {{cassandra_rpc_network_interface}}
+{% endif %}
 {% if cassandra_rpc_broadcast_address is defined %}rpc_interface_prefer_ipv6: {{cassandra_rpc_broadcast_address}}
 {% else %}# rpc_interface_prefer_ipv6: false{% endif %}
 
