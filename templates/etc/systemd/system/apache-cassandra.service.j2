@@ -5,10 +5,10 @@ Description=Cassandra
 After=network.target
 
 [Service]
-PIDFile=/opt/apache-cassandra/run/apache-cassandra.pid
-User=root
-Group=root
-ExecStart=/opt/apache-cassandra/bin/cassandra -f -R -p /opt/apache-cassandra/run/apache-cassandra.pid
+PIDFile={{cassandra_home_dir}}/apache-cassandra/run/apache-cassandra.pid
+User=cassandra
+Group=cassandra
+ExecStart={{cassandra_home_dir}}/apache-cassandra/bin/cassandra -f -R -p {{cassandra_home_dir}}/apache-cassandra/run/apache-cassandra.pid
 StandardOutput=journal
 StandardError=journal
 LimitNOFILE=100000

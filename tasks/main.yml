@@ -1,11 +1,24 @@
 ---
-# tasks file for ansible-cassandra
-- name: download...
+- name: create cassandra group
   become: yes
   become_user: root
+  group: name=cassandra state=present
+
+- name: create cassandra user
+  become: yes
+  become_user: root
+  user: >-
+    name=cassandra
+    group=cassandra
+    home={{cassandra_home_dir}}
+    state=present
+  
+- name: download...
+  become: yes
+  become_user: cassandra
   get_url: >-
     url={{cassandra_tgz_url}}
-    dest=/tmp/{{cassandra_tgz}}
+    dest={{cassandra_home_dir}}/{{cassandra_tgz}}
     mode=0644
 
 - name: unarchive...
@@ -13,40 +26,34 @@
   become_user: root
   unarchive: >-
     copy=no
-    src=/tmp/{{cassandra_tgz}}
-    dest=/opt
-    creates=/opt/{{cassandra_name}}
-
-- name: link...
-  become: yes
-  become_user: root
-  file: >-
-    src=/opt/{{cassandra_name}}
-    dest=/opt/apache-cassandra
-    state=link
-
-- name: add to system path
-  become: yes
-  become_user: root
-  copy: >-
-    src=etc/profile.d/cassandra.sh
-    dest=/etc/profile.d/cassandra.sh
-    mode=0644
+    src={{cassandra_home_dir}}/{{cassandra_tgz}}
+    dest={{cassandra_home_dir}}
+    creates={{cassandra_home_dir}}/{{cassandra_name}}
 
 - name: configure...
   become: yes
-  become_user: root
+  become_user: cassandra
   template: >-
     src=opt/apache-cassandra/conf/cassandra.yaml.j2
-    dest=/opt/{{cassandra_name}}/conf/cassandra.yaml
+    dest={{cassandra_home_dir}}/{{cassandra_name}}/conf/cassandra.yaml
     mode=0644
     
+- name: link...
+  become: yes
+  become_user: cassandra
+  file: >-
+    src={{cassandra_home_dir}}/{{cassandra_name}}
+    dest={{cassandra_home_dir}}/apache-cassandra
+    state=link
+
 - name: install systemd cassandra.service unit
   become: yes
   become_user: root
+  with_items:
+    - etc/systemd/system/apache-cassandra.service
   template: >-
-    src=usr/lib/systemd/system/apache-cassandra.service.j2
-    dest=/usr/lib/systemd/system/apache-cassandra.service
+    src={{item}}.j2
+    dest=/{{item}}
     mode=0644
 
 - name: launch apache-cassandra
