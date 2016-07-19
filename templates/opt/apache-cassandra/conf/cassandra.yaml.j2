@@ -185,14 +185,14 @@ partitioner: {{cassandra_partitioner | to_yaml}}
 # will spread data evenly across them, subject to the granularity of
 # the configured compaction strategy.
 # If not set, the default directory is $CASSANDRA_HOME/data/data.
-{% if cassandra_data_file_directories defined %}
+{% if cassandra_data_file_directories is defined %}
 data_file_directories: {{cassandra_data_file_directories | to_yaml}}
 {% endif %}
 
 # commit log.  when running on magnetic HDD, this should be a
 # separate spindle than the data directories.
 # If not set, the default directory is $CASSANDRA_HOME/data/commitlog.
-{% if cassandra_commitlog_directory %}
+{% if cassandra_commitlog_directory is defined %}
 commitlog_directory: {{cassandra_commitlog_directory | to_yaml}}
 {% endif %}
 
@@ -870,7 +870,7 @@ dynamic_snitch_badness_threshold: 0.1
 # client requests to a node with a separate queue for each
 # request_scheduler_id. The scheduler is further customized by
 # request_scheduler_options as described below.
-request_scheduler: {{cassandra_request_scheduler | to_yaml}}
+request_scheduler: {{cassandra_request_scheduler | to_yaml}}`<
 
 # Scheduler Options vary based on the type of scheduler
 # NoScheduler - Has no options
