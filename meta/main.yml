@@ -5,21 +5,24 @@ galaxy_info:
   company: BlackRock
   license:
     - MIT
-  min_ansible_version: 1.2
+  min_ansible_version: 2.0
   platforms:
     - name: EL
       versions:
         - 7
     - name: Fedora
       versions:
-        - 22
         - 23
+    - name: Ubuntu
+      versions:
+        - xenial
 
   galaxy_tags:
     - development
 
 dependencies:
-  - andrewrothstein.unarchive-deps
-  - andrewrothstein.java
-  
+  - role: andrewrothstein.unarchive-deps
+    version: v1.0.3
+  - role: andrewrothstein.java
+o    version: v1.0.1
   

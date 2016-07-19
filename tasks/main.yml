@@ -1,54 +1,55 @@
 ---
 # tasks file for ansible-cassandra
 - name: download...
+  become: yes
+  become_user: root
   get_url: >-
     url={{cassandra_tgz_url}}
     dest=/tmp/{{cassandra_tgz}}
-    owner=root
-    group=root
     mode=0644
 
 - name: unarchive...
+  become: yes
+  become_user: root
   unarchive: >-
     copy=no
     src=/tmp/{{cassandra_tgz}}
     dest=/opt
-    owner=root
-    group=root
     creates=/opt/{{cassandra_name}}
 
 - name: link...
+  become: yes
+  become_user: root
   file: >-
     src=/opt/{{cassandra_name}}
     dest=/opt/apache-cassandra
-    owner=root
-    group=root
     state=link
 
 - name: add to system path
+  become: yes
+  become_user: root
   copy: >-
     src=etc/profile.d/cassandra.sh
     dest=/etc/profile.d/cassandra.sh
-    owner=root
-    group=root
     mode=0644
 
 - name: configure...
+  become: yes
+  become_user: root
   template: >-
     src=opt/apache-cassandra/conf/cassandra.yaml.j2
     dest=/opt/{{cassandra_name}}/conf/cassandra.yaml
-    owner=root
-    group=root
     mode=0644
     
 - name: install systemd cassandra.service unit
+  become: yes
+  become_user: root
   template: >-
     src=usr/lib/systemd/system/apache-cassandra.service.j2
     dest=/usr/lib/systemd/system/apache-cassandra.service
-    owner=root
-    group=root
     mode=0644
 
 - name: launch apache-cassandra
+  become: yes
+  become_user: root
   service: name=apache-cassandra enabled=yes state=started
-
