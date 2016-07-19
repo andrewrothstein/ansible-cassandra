@@ -23,7 +23,7 @@
 
 - name: unarchive...
   become: yes
-  become_user: root
+  become_user: cassandra
   unarchive: >-
     copy=no
     src={{cassandra_home_dir}}/{{cassandra_tgz}}
