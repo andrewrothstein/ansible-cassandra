@@ -1,7 +1,7 @@
 ---
 # defaults file for ansible-cassandra
 cassandra_ver : '3.7'
-cassandra_mirror : 'http://mirrors.advancedhosters.com/apache/cassandra'
+cassandra_mirror : http://www-us.apache.org/dist/cassandra
 cassandra_network_iface: eth0
 cassandra_home_dir : /var/cassandra
 
