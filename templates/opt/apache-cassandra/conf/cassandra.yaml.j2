@@ -391,7 +391,7 @@ seed_provider:
       parameters:
           # seeds is actually a comma-delimited list of addresses.
           # Ex: "<ip1>,<ip2>,<ip3>"
-          - seeds: "{% for host in groups['cassandra'] %}{{hostvars[host]['ansible_' + hostvars[host]['cassandra_network_iface']]['ipv4']['address']}}{% if not loop.last %},{% endif %}{% endfor %}"
+          - seeds: "{% for host in groups[cassandra_ansible_groupname] %}{{hostvars[host]['ansible_' + hostvars[host]['cassandra_network_iface']]['ipv4']['address']}}{% if not loop.last %},{% endif %}{% endfor %}"
 
 # For workloads with more data than can fit in memory, Cassandra's
 # bottleneck will be reads that need to fetch data from
