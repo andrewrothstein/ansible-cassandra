@@ -24,3 +24,5 @@ cassandra_request_scheduler: org.apache.cassandra.scheduler.NoScheduler
 cassandra_rpc_port: 9160
 
 cassandra_ansible_groupname: cassandra
+
+cassandra_download_timeout_seconds: 600

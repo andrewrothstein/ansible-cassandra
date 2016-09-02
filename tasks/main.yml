@@ -20,6 +20,7 @@
     url={{cassandra_tgz_url}}
     dest={{cassandra_home_dir}}/{{cassandra_tgz}}
     mode=0644
+    timeout={{cassandra_download_timeout_seconds}}
 
 - name: unarchive...
   become: yes
