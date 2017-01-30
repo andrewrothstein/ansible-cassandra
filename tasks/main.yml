@@ -1,4 +1,14 @@
 ---
+- name: download...
+  become: yes
+  become_user: root
+  get_url:
+    url: '{{cassandra_tgz_url}}'
+    dest: /tmp/{{cassandra_tgz}}
+    mode: '0644'
+    timeout: '{{cassandra_download_timeout_seconds}}'
+    checksum: '{{cassandra_checksum}}'
+
 - name: create cassandra group
   become: yes
   become_user: root
@@ -15,15 +25,6 @@
     home: '{{cassandra_home_dir}}'
     state: present
   
-- name: download...
-  become: yes
-  become_user: root
-  get_url:
-    url: '{{cassandra_tgz_url}}'
-    dest: /tmp/{{cassandra_tgz}}
-    mode: '0644'
-    timeout: '{{cassandra_download_timeout_seconds}}'
-
 - name: unarchive...
   become: yes
   become_user: '{{cassandra_user}}'
