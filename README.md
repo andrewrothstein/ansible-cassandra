@@ -1,39 +1,31 @@
 andrewrothstein.cassandra
 =========================
 
-Installs and configures a cassandra cluster across hosts in an Ansible group
+Installs [Apache Cassandra](http://cassandra.apache.org/)
 
 Requirements
 ------------
 
-See [meta/main.yml]
+See [meta/main.yml](meta/main.yml)
 
 Role Variables
 --------------
 
-See [defaults/main.yml]
+See [defaults/main.yml](defaults/main.yml)
 
 Dependencies
 ------------
 
-See [meta/main.yml]
-
-Example Inventory
------------------
-inventory.ini
-[cassandra-cluster]
-host[1-3].test
-
-group_vars/cassandra-cluster.yml
-cassandra_ansible_groupname: cassandra-cluster
+See [meta/main.yml](meta/main.yml)
 
 Example Playbook
 ----------------
 
-- hosts: cassandra-cluster
+```yml
+- hosts: cassandra
   roles:
-    - role: andrewrothstein.cassandra
-      cassandra_ansible_groupname: cassandra-cluster
+    - andrewrothstein.cassandra
+```
 
 License
 -------
@@ -43,4 +35,4 @@ MIT
 Author Information
 ------------------
 
-Andrew Rothstein andrew.rothstein@gmail.com
+Andrew Rothstein <andrew.rothstein@gmail.com>

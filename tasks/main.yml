@@ -2,62 +2,41 @@
 - name: create cassandra group
   become: yes
   become_user: root
-  group: name=cassandra state=present
+  group:
+    name: '{{cassandra_group}}'
+    state: present
 
 - name: create cassandra user
   become: yes
   become_user: root
-  user: >-
-    name=cassandra
-    group=cassandra
-    home={{cassandra_home_dir}}
-    state=present
+  user:
+    name: '{{cassandra_user}}'
+    group: '{{cassandra_group}}'
+    home: '{{cassandra_home_dir}}'
+    state: present
   
 - name: download...
   become: yes
-  become_user: cassandra
-  get_url: >-
-    url={{cassandra_tgz_url}}
-    dest={{cassandra_home_dir}}/{{cassandra_tgz}}
-    mode=0644
-    timeout={{cassandra_download_timeout_seconds}}
+  become_user: root
+  get_url:
+    url: '{{cassandra_tgz_url}}'
+    dest: /tmp/{{cassandra_tgz}}
+    mode: '0644'
+    timeout: '{{cassandra_download_timeout_seconds}}'
 
 - name: unarchive...
   become: yes
   become_user: cassandra
-  unarchive: >-
-    copy=no
-    src={{cassandra_home_dir}}/{{cassandra_tgz}}
-    dest={{cassandra_home_dir}}
-    creates={{cassandra_home_dir}}/{{cassandra_name}}
-
-- name: configure...
-  become: yes
-  become_user: cassandra
-  template: >-
-    src=opt/apache-cassandra/conf/cassandra.yaml.j2
-    dest={{cassandra_home_dir}}/{{cassandra_name}}/conf/cassandra.yaml
-    mode=0644
+  unarchive:
+    copy: no
+    src: /tmp/{{cassandra_tgz}}
+    dest: '{{cassandra_home_dir}}'
+    creates: '{{cassandra_home_dir}}/{{cassandra_name}}'
     
 - name: link...
   become: yes
   become_user: cassandra
-  file: >-
-    src={{cassandra_home_dir}}/{{cassandra_name}}
-    dest={{cassandra_home_dir}}/apache-cassandra
-    state=link
-
-- name: install systemd cassandra.service unit
-  become: yes
-  become_user: root
-  with_items:
-    - etc/systemd/system/apache-cassandra.service
-  template: >-
-    src={{item}}.j2
-    dest=/{{item}}
-    mode=0644
-
-- name: launch apache-cassandra
-  become: yes
-  become_user: root
-  service: name=apache-cassandra enabled=yes state=started
+  file:
+    src: '{{cassandra_home_dir}}/{{cassandra_name}}'
+    dest: '{{cassandra_home_dir}}/cassandra'
+    state: link
