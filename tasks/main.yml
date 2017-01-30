@@ -26,7 +26,7 @@
 
 - name: unarchive...
   become: yes
-  become_user: cassandra
+  become_user: '{{cassandra_user}}'
   unarchive:
     copy: no
     src: /tmp/{{cassandra_tgz}}
@@ -35,7 +35,7 @@
     
 - name: link...
   become: yes
-  become_user: cassandra
+  become_user: '{{cassandra_user}}'
   file:
     src: '{{cassandra_home_dir}}/{{cassandra_name}}'
     dest: '{{cassandra_home_dir}}/cassandra'
