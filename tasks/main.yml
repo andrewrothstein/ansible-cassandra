@@ -20,7 +20,7 @@
     
 - name: link...
   become: yes
-  become_user: '{{cassandra_user}}'
+  become_user: root
   file:
     src: '{{cassandra_install_parent_dir}}/{{cassandra_name}}'
     dest: '{{cassandra_install_parent_dir}}/cassandra'
