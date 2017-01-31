@@ -9,35 +9,19 @@
     timeout: '{{cassandra_download_timeout_seconds}}'
     checksum: '{{cassandra_checksum}}'
 
-- name: create cassandra group
-  become: yes
-  become_user: root
-  group:
-    name: '{{cassandra_group}}'
-    state: present
-
-- name: create cassandra user
-  become: yes
-  become_user: root
-  user:
-    name: '{{cassandra_user}}'
-    group: '{{cassandra_group}}'
-    home: '{{cassandra_home_dir}}'
-    state: present
-  
 - name: unarchive...
   become: yes
-  become_user: '{{cassandra_user}}'
+  become_user: root
   unarchive:
     copy: no
     src: /tmp/{{cassandra_tgz}}
-    dest: '{{cassandra_home_dir}}'
-    creates: '{{cassandra_home_dir}}/{{cassandra_name}}'
+    dest: '{{cassandra_install_parent_dir}}'
+    creates: '{{cassandra_install_parent_dir}}/{{cassandra_name}}'
     
 - name: link...
   become: yes
   become_user: '{{cassandra_user}}'
   file:
-    src: '{{cassandra_home_dir}}/{{cassandra_name}}'
-    dest: '{{cassandra_home_dir}}/cassandra'
+    src: '{{cassandra_install_parent_dir}}/{{cassandra_name}}'
+    dest: '{{cassandra_install_parent_dir}}/cassandra'
     state: link
