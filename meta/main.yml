@@ -16,6 +16,12 @@ galaxy_info:
     - name: Ubuntu
       versions:
         - all
+    - name: Alpine
+      versions:
+        - all
+    - name: Debian
+      verseions:
+        - jessie
 
   galaxy_tags:
     - database

@@ -5,7 +5,7 @@
   get_url:
     url: '{{cassandra_tgz_url}}'
     dest: /tmp/{{cassandra_tgz}}
-    mode: '0644'
+    mode: 0644
     timeout: '{{cassandra_download_timeout_seconds}}'
     checksum: '{{cassandra_checksum}}'
 
@@ -16,12 +16,12 @@
     remote_src: yes
     src: /tmp/{{cassandra_tgz}}
     dest: '{{cassandra_install_parent_dir}}'
-    creates: '{{cassandra_install_parent_dir}}/{{cassandra_name}}'
+    creates: '{{cassandra_install_dir}}'
     
 - name: link...
   become: yes
   become_user: root
   file:
-    src: '{{cassandra_install_parent_dir}}/{{cassandra_name}}'
-    dest: '{{cassandra_install_parent_dir}}/cassandra'
+    src: '{{cassandra_install_dir}}'
+    dest: '{{cassandra_link_dir}}'
     state: link
