@@ -25,3 +25,14 @@
     src: '{{cassandra_install_dir}}'
     dest: '{{cassandra_link_dir}}'
     state: link
+
+- name: add cassandra binaries to default login shell
+  become: yes
+  become_user: root
+  with_item:
+    - f: cassandra.sh
+      d: /etc/profile.d
+  template:
+    src: '{{item.f}}.j2'
+    dest: '{{item.d}}/{{item.f}}'
+    mode: '{{item.m|default("0644")}}'
