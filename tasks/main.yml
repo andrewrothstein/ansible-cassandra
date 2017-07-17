@@ -29,7 +29,7 @@
 - name: add cassandra binaries to default login shell
   become: yes
   become_user: root
-  with_item:
+  with_items:
     - f: cassandra.sh
       d: /etc/profile.d
   template:
