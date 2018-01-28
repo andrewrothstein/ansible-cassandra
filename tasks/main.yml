@@ -1,22 +1,36 @@
 ---
-- name: download...
+- name: check for install
   become: yes
-  become_user: root
-  get_url:
-    url: '{{cassandra_tgz_url}}'
-    dest: /tmp/{{cassandra_tgz}}
-    mode: 0644
-    timeout: '{{cassandra_download_timeout_seconds}}'
-    checksum: '{{cassandra_checksum}}'
-
-- name: unarchive...
-  become: yes
-  become_user: root
-  unarchive:
-    remote_src: yes
-    src: /tmp/{{cassandra_tgz}}
-    dest: '{{cassandra_install_parent_dir}}'
-    creates: '{{cassandra_install_dir}}'
+  stat:
+    path: '{{cassandra_install_dir}}'
+  changed_when: False
+  register: cassandra_binary
+- when: not cassandra_binary.stat.exists
+  block:
+    - name: download...
+      become: yes
+      become_user: root
+      get_url:
+        url: '{{cassandra_tgz_url}}'
+        dest: /tmp/{{cassandra_tgz}}
+        mode: 0644
+        timeout: '{{cassandra_download_timeout_seconds}}'
+        checksum: '{{cassandra_checksum}}'
+    - name: unarchive...
+      become: yes
+      become_user: root
+      unarchive:
+        remote_src: yes
+        src: /tmp/{{cassandra_tgz}}
+        dest: '{{cassandra_install_parent_dir}}'
+        creates: '{{cassandra_install_dir}}'
+  always:
+    - name: cleanup
+      become: yes
+      become_user: root
+      file:
+        path: /tmp/{{cassandra_tgz}}
+        state: absent
     
 - name: link...
   become: yes

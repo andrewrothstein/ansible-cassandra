@@ -2,6 +2,8 @@
 # defaults file for ansible-cassandra
 cassandra_ver : '3.11.0'
 cassandra_mirror : http://www-us.apache.org/dist/cassandra
-cassandra_checksum: sha256:d597b99b402bd2cf925033519db9e58340acb893fd83d600d904ba4041d44fa7
+cassandra_checksums:
+  '3.11.0': sha256:d597b99b402bd2cf925033519db9e58340acb893fd83d600d904ba4041d44fa7
+  '3.11.1': sha256:6feed696759e2f3219e0ebde13f4c9080cac0744a77eb3cb43af136ab527f0ed
 cassandra_install_parent_dir : /usr/local
 cassandra_download_timeout_seconds: 600
