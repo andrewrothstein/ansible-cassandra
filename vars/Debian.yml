@@ -1,0 +1,3 @@
+---
+cassandra_dep_os_pkgs:
+  - procps
