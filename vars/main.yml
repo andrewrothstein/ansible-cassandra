@@ -1,10 +1,10 @@
 ---
 # vars file for ansible-cassandra
-cassandra_name : 'apache-cassandra-{{cassandra_ver}}'
-cassandra_tgz : '{{cassandra_name}}-bin.tar.gz'
+cassandra_name: 'apache-cassandra-{{cassandra_ver}}'
+cassandra_tgz: '{{cassandra_name}}-bin.tar.gz'
 
-# http://www-us.apache.org/dist/cassandra/3.11.0/apache-cassandra-3.11.0-bin.tar.gz
-cassandra_tgz_url : '{{cassandra_mirror}}/{{cassandra_ver}}/{{cassandra_tgz}}'
+# http://www-us.apache.org/dist/cassandra/3.11.3/apache-cassandra-3.11.3-bin.tar.gz
+cassandra_tgz_url:  '{{cassandra_mirror}}/{{cassandra_ver}}/{{cassandra_tgz}}'
 cassandra_checksum: '{{cassandra_checksums[cassandra_ver]}}'
 
 cassandra_install_dir: '{{cassandra_install_parent_dir}}/{{cassandra_name}}'
