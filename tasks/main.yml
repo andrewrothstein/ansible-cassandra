@@ -1,27 +1,26 @@
 ---
 - name: resolve platform specific vars
-  include_vars: '{{item}}'
+  include_vars: '{{ item }}'
   with_first_found:
     - files:
-        - '{{ansible_distribution}}-{{ansible_distribution_release}}.yml'
-        - '{{ansible_distribution}}.yml'
-        - '{{ansible_os_family}}.yml'
+        - '{{ ansible_distribution }}-{{ ansible_distribution_release }}.yml'
+        - '{{ ansible_distribution }}.yml'
+        - '{{ ansible_os_family }}.yml'
       skip: true
       paths:
-        - '{{role_path}}/vars'
+        - '{{ role_path }}/vars'
 
 - name: install OS dep pkgs...
   become: yes
   become_user: root
-  with_items: '{{cassandra_dep_os_pkgs|default([])}}'
   package:
-    name: '{{item}}'
+    name: '{{ cassandra_dep_os_pkgs|default([]) }}'
     state: present
-        
+
 - name: check for install
   become: yes
   stat:
-    path: '{{cassandra_install_dir}}'
+    path: '{{ cassandra_install_dir }}'
   changed_when: False
   register: cassandra_binary
 - when: not cassandra_binary.stat.exists
@@ -30,33 +29,33 @@
       become: yes
       become_user: root
       get_url:
-        url: '{{cassandra_tgz_url}}'
-        dest: /tmp/{{cassandra_tgz}}
+        url: '{{ cassandra_tgz_url }}'
+        dest: /tmp/{{ cassandra_tgz }}
         mode: 0644
-        timeout: '{{cassandra_download_timeout_seconds}}'
-        checksum: '{{cassandra_checksum}}'
+        timeout: '{{ cassandra_download_timeout_seconds }}'
+        checksum: '{{ cassandra_checksum }}'
     - name: unarchive...
       become: yes
       become_user: root
       unarchive:
         remote_src: yes
-        src: /tmp/{{cassandra_tgz}}
-        dest: '{{cassandra_install_parent_dir}}'
-        creates: '{{cassandra_install_dir}}'
+        src: /tmp/{{ cassandra_tgz }}
+        dest: '{{ cassandra_install_parent_dir }}'
+        creates: '{{ cassandra_install_dir }}'
   always:
     - name: cleanup
       become: yes
       become_user: root
       file:
-        path: /tmp/{{cassandra_tgz}}
+        path: /tmp/{{ cassandra_tgz }}
         state: absent
-    
+
 - name: link...
   become: yes
   become_user: root
   file:
-    src: '{{cassandra_install_dir}}'
-    dest: '{{cassandra_link_dir}}'
+    src: '{{ cassandra_install_dir }}'
+    dest: '{{ cassandra_link_dir }}'
     state: link
 
 - name: add cassandra binaries to default login shell
@@ -66,6 +65,6 @@
     - f: cassandra.sh
       d: /etc/profile.d
   template:
-    src: '{{item.f}}.j2'
-    dest: '{{item.d}}/{{item.f}}'
-    mode: '{{item.m|default("0644")}}'
+    src: '{{ item.f }}.j2'
+    dest: '{{ item.d }}/{{ item.f }}'
+    mode: '{{ item.m|default("0644") }}'

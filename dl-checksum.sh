@@ -1,4 +1,5 @@
 #!/usr/bin/env sh
+set -e
 MIRROR=http://www.apache.org/dist/cassandra
 
 dl_ver() {
@@ -8,4 +9,4 @@ dl_ver() {
     printf "  '%s': sha512:%s\n" $ver $(curl -sSL $url | awk '{print $1}')
 }
 
-dl_ver ${1:-3.11.5}
+dl_ver ${1:-3.11.7}
