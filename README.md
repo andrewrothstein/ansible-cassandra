@@ -1,6 +1,6 @@
 andrewrothstein.cassandra
 =========================
-[![Build Status](https://travis-ci.org/andrewrothstein/ansible-cassandra.svg?branch=master)](https://travis-ci.org/andrewrothstein/ansible-cassandra)
+![Build Status](https://github.com/andrewrothstein/ansible-cassandra/actions/workflows/build.yml/badge.svg)
 
 Installs [Apache Cassandra](http://cassandra.apache.org/)
 
