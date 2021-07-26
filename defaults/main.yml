@@ -1,6 +1,6 @@
 ---
 # defaults file for ansible-cassandra
-cassandra_ver: 3.11.8
+cassandra_ver: 3.11.10
 cassandra_mirror: http://www.apache.org/dist/cassandra
 cassandra_install_parent_dir: /usr/local
 cassandra_download_timeout_seconds: 600
@@ -19,3 +19,5 @@ cassandra_checksums:
   '3.11.7': sha512:c23a51d2d583e707fae8b0e0c413a6287a47af131650715cb3ae8d404b9958fca531c6d73cd196bde5054d2485cc12b6bf195de173f1baa647ac4cc012d9aecd
   # http://www.apache.org/dist/cassandra/3.11.8/apache-cassandra-3.11.8-bin.tar.gz.sha512
   '3.11.8': sha512:ece12cafc7aab7f035a5c8505a7a32915f7fe8c2729c7ade69b21d9354e3f0c06fd5e6206e7f066fb1e525162213fa295200cd46fd1a8bf4b27c9bc834a86c43
+  # http://www.apache.org/dist/cassandra/3.11.10/apache-cassandra-3.11.10-bin.tar.gz.sha512
+  '3.11.10': sha512:f229e2dad47ebaeb6bb7ed13ee5cea3bd3ad9994cc9222cabbffa59651e12dbf9a463e99d397a0c4096c61bacb87d34eb4fba4f8ed9da0f0972a3d7225cef36f
