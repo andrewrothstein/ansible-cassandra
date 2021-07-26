@@ -11,47 +11,47 @@
         - '{{ role_path }}/vars'
 
 - name: install OS dep pkgs...
-  become: yes
+  become: true
   become_user: root
   package:
     name: '{{ cassandra_dep_os_pkgs|default([]) }}'
     state: present
 
-- name: check for install
-  become: yes
+- name: checking for cassandra install in {{ cassandra_install_dir }}
+  become: true
   stat:
     path: '{{ cassandra_install_dir }}'
-  changed_when: False
+  changed_when: false
   register: cassandra_binary
 - when: not cassandra_binary.stat.exists
   block:
-    - name: download...
-      become: yes
+    - name: downloading {{ cassandra_tgz_url }}
+      become: true
       become_user: root
       get_url:
         url: '{{ cassandra_tgz_url }}'
-        dest: /tmp/{{ cassandra_tgz }}
+        dest: '{{ cassandra_tmp_tgz }}'
         mode: 0644
         timeout: '{{ cassandra_download_timeout_seconds }}'
         checksum: '{{ cassandra_checksum }}'
-    - name: unarchive...
-      become: yes
+    - name: unarchiving {{ cassandra_tmp_tgz }}
+      become: true
       become_user: root
       unarchive:
-        remote_src: yes
-        src: /tmp/{{ cassandra_tgz }}
+        remote_src: true
+        src: '{{ cassandra_tmp_tgz }}'
         dest: '{{ cassandra_install_parent_dir }}'
         creates: '{{ cassandra_install_dir }}'
   always:
-    - name: cleanup
-      become: yes
+    - name: rm -f {{ cassandra_tmp_tgz }}
+      become: true
       become_user: root
       file:
-        path: /tmp/{{ cassandra_tgz }}
+        path: '{{ cassandra_tmp_tgz }}'
         state: absent
 
-- name: link...
-  become: yes
+- name: linking {{ cassandra_link_dir }} to {{ cassandra_install_dir }}
+  become: true
   become_user: root
   file:
     src: '{{ cassandra_install_dir }}'
@@ -59,7 +59,7 @@
     state: link
 
 - name: add cassandra binaries to default login shell
-  become: yes
+  become: true
   become_user: root
   with_items:
     - f: cassandra.sh
