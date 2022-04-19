@@ -1,4 +1,10 @@
 ---
 - hosts: all
+  vars:
+    openjdk_ver:
+      major: 11
+      minor: 0
+      patch: "14.1"
+      b: "1"
   roles:
-    - role: '{{playbook_dir}}'
+    - role: '{{ playbook_dir }}'
