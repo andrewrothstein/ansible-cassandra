@@ -1,4 +1,10 @@
 ---
+- include_role:
+    name: andrewrothstein.unarchive-deps
+- include_role:
+    name: andrewrothstein.temurin
+  vars:
+    openjdk_app: jre
 - name: resolve platform specific vars
   include_vars: '{{ item }}'
   with_first_found:
