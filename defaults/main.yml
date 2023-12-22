@@ -1,6 +1,6 @@
 ---
 # defaults file for ansible-cassandra
-cassandra_ver: 4.0.7
+cassandra_ver: 4.1.3
 cassandra_mirror: http://downloads.apache.org/cassandra
 cassandra_install_parent_dir: /usr/local
 cassandra_download_timeout_seconds: 600
@@ -35,3 +35,19 @@ cassandra_checksums:
   '4.0.6': sha512:07c2a2f018c5921bfe0d7afba877a23d0ac5bbda05b9414abc60b4fae761115d0fb650eb226247b66d62c450d7eeadc95b6e270ebf0339d8263222fe5d49b07b
   # http://downloads.apache.org/cassandra/4.0.7/apache-cassandra-4.0.7-bin.tar.gz.sha512
   '4.0.7': sha512:99e5fe5411fb2f82dc588091923a192211f9fda911c3b9da8371fe803155063d2f46bbe57c4c118dc1a2971b37f939dad57ec5ab164da91646fbea26798153b2
+  # http://downloads.apache.org/cassandra/4.0.8/apache-cassandra-4.0.8-bin.tar.gz.sha512
+  '4.0.8': sha512:6cb37f7266f446a23f32d73a128f7e96056b8829cbe653b1ecb4683fd4dab8f0d7a13357f7ee4ee2d6cc77dcbd97ca3dcce017334b9d129b01ca2b0660bc7ee6
+  # http://downloads.apache.org/cassandra/4.0.9/apache-cassandra-4.0.9-bin.tar.gz.sha512
+  '4.0.9': sha512:94ec77fec09ed69912dd1da98f39e5e5d68aba8003180b62a0b0599cf6bae895a0944c9e0ac2b966d4e7658c188782025ab82f32e9f3139c5090d28be470e0a2
+  # http://downloads.apache.org/cassandra/4.0.10/apache-cassandra-4.0.10-bin.tar.gz.sha512
+  '4.0.10': sha512:c398ae90597f25036a424d9fd61806f76939f40a144945db75247da28bd1a0476ba5679fd0318fefe7fc5be4533f734028119f03f718cc91f471f01d971563cb
+  # http://downloads.apache.org/cassandra/4.0.11/apache-cassandra-4.0.11-bin.tar.gz.sha512
+  '4.0.11': sha512:92bd35819e86927709add1075023af5aed93d42e0115bfa6b675b15e93b31bffa6fd3b9ff95a403bb9650ec417a0567ac776c88b56fe373938451746bbc64a50
+  # http://downloads.apache.org/cassandra/4.1.0/apache-cassandra-4.1.0-bin.tar.gz.sha512
+  '4.1.0': sha512:d8cb800e99d8905e85a62d1d658c1c3056459e7ba0b27e0997e1c537918be8ab333f2a89cf38cafc04ab4d711fd8c542593548fb30bf6a81329f2b47370389e9
+  # http://downloads.apache.org/cassandra/4.1.1/apache-cassandra-4.1.1-bin.tar.gz.sha512
+  '4.1.1': sha512:dc11ce5c0485d2d54d0fff3ae35d1b7f1c3e32055c0699206f59a5bbe983b50972ceb4638bfe65a7c80a6db5052b70ad75718525eef812ba9ae6a301fd5bc8be
+  # http://downloads.apache.org/cassandra/4.1.2/apache-cassandra-4.1.2-bin.tar.gz.sha512
+  '4.1.2': sha512:e6ba9efc46743547130cbcd0e174d6761e442f97b17732df8f15d25c9dcf5eaf009e0ac550aad3e34e5f8fc1b300062ad248def3ca85ef372d20d745698f01f9
+  # http://downloads.apache.org/cassandra/4.1.3/apache-cassandra-4.1.3-bin.tar.gz.sha512
+  '4.1.3': sha512:393443a5b9849645362df2f7536e734e1fc6d513aadf440fab8dda3063553394a138805098796d35f9d4d31e2899ecab630a2ec2a44d00d5e63bed549a2e844c

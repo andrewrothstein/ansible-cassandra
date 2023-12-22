@@ -4,33 +4,32 @@ galaxy_info:
   company: BlackRock
   description: apache cassandra role
   galaxy_tags:
-  - database
-  - nosql
-  - cassandra
-  license:
-  - MIT
-  min_ansible_version: 2.0
+    - database
+    - nosql
+    - cassandra
+  license: MIT
+  min_ansible_version: '2.0'
   platforms:
-  - name: Alpine
-    versions:
-    - all
-  - name: Archlinux
-    versions:
-    - all
-  - name: Debian
-    versions:
-    - bullseye
-    - buster
-  - name: EL
-    versions:
-    - 8
-    - 9
-  - name: Fedora
-    versions:
-    - 36
-    - 37
-  - name: Ubuntu
-    versions:
-    - bionic
-    - focal
-    - jammy
+    - name: Alpine
+      versions:
+        - all
+    - name: Archlinux
+      versions:
+        - all
+    - name: Debian
+      versions:
+        - bookworm
+        - bullseye
+    - name: EL
+      versions:
+        - 8
+        - 9
+    - name: Fedora
+      versions:
+        - 38
+        - 39
+    - name: Ubuntu
+      versions:
+        - focal
+        - jammy
+  role_name: cassandra

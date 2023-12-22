@@ -1,12 +1,12 @@
 ---
-- include_role:
-    name: andrewrothstein.unarchive-deps
-- include_role:
+- ansible.builtin.include_role:
+    name: andrewrothstein.unarchivedeps
+- ansible.builtin.include_role:
     name: andrewrothstein.temurin
   vars:
     openjdk_app: jre
-- name: resolve platform specific vars
-  include_vars: '{{ item }}'
+- name: Resolve platform specific vars
+  ansible.builtin.include_vars: '{{ item }}'
   with_first_found:
     - files:
         - '{{ ansible_distribution }}-{{ ansible_distribution_release }}.yml'
@@ -16,61 +16,61 @@
       paths:
         - '{{ role_path }}/vars'
 
-- name: install OS dep pkgs...
+- name: Install OS dep pkgs...
   become: true
   become_user: root
-  package:
-    name: '{{ cassandra_dep_os_pkgs|default([]) }}'
+  ansible.builtin.package:
+    name: '{{ cassandra_dep_os_pkgs | default([]) }}'
     state: present
 
-- name: checking for cassandra install in {{ cassandra_install_dir }}
+- name: Checking for cassandra install in {{ cassandra_install_dir }}
   become: true
-  stat:
+  ansible.builtin.stat:
     path: '{{ cassandra_install_dir }}'
   changed_when: false
   register: cassandra_binary
 - when: not cassandra_binary.stat.exists
   block:
-    - name: downloading {{ cassandra_tgz_url }}
+    - name: Downloading {{ cassandra_tgz_url }}
       become: true
       become_user: root
-      get_url:
+      ansible.builtin.get_url:
         url: '{{ cassandra_tgz_url }}'
         dest: '{{ cassandra_tmp_tgz }}'
-        mode: 0644
+        mode: '644'
         timeout: '{{ cassandra_download_timeout_seconds }}'
         checksum: '{{ cassandra_checksum }}'
-    - name: unarchiving {{ cassandra_tmp_tgz }}
+    - name: Unarchiving {{ cassandra_tmp_tgz }}
       become: true
       become_user: root
-      unarchive:
+      ansible.builtin.unarchive:
         remote_src: true
         src: '{{ cassandra_tmp_tgz }}'
         dest: '{{ cassandra_install_parent_dir }}'
         creates: '{{ cassandra_install_dir }}'
   always:
-    - name: rm -f {{ cassandra_tmp_tgz }}
+    - name: Rm -f {{ cassandra_tmp_tgz }}
       become: true
       become_user: root
-      file:
+      ansible.builtin.file:
         path: '{{ cassandra_tmp_tgz }}'
         state: absent
 
-- name: linking {{ cassandra_link_dir }} to {{ cassandra_install_dir }}
+- name: Linking {{ cassandra_link_dir }} to {{ cassandra_install_dir }}
   become: true
   become_user: root
-  file:
+  ansible.builtin.file:
     src: '{{ cassandra_install_dir }}'
     dest: '{{ cassandra_link_dir }}'
     state: link
 
-- name: add cassandra binaries to default login shell
+- name: Add cassandra binaries to default login shell
   become: true
   become_user: root
   with_items:
     - f: cassandra.sh
       d: /etc/profile.d
-  template:
+  ansible.builtin.template:
     src: '{{ item.f }}.j2'
     dest: '{{ item.d }}/{{ item.f }}'
-    mode: '{{ item.m|default("0644") }}'
+    mode: '{{ item.m|default("644") }}'
