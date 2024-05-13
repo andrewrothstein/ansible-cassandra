@@ -1,10 +1,12 @@
 ---
-- ansible.builtin.include_role:
+- name: Installing andrewrothstein.unarchivedeps
+  ansible.builtin.include_role:
     name: andrewrothstein.unarchivedeps
-- ansible.builtin.include_role:
+- name: Installing andrewrothstein.temurin
+  ansible.builtin.include_role:
     name: andrewrothstein.temurin
   vars:
-    openjdk_app: jre
+    temurin_app: jre
 - name: Resolve platform specific vars
   ansible.builtin.include_vars: '{{ item }}'
   with_first_found:
@@ -29,7 +31,8 @@
     path: '{{ cassandra_install_dir }}'
   changed_when: false
   register: cassandra_binary
-- when: not cassandra_binary.stat.exists
+- name: Downloading and installing apache cassandra
+  when: not cassandra_binary.stat.exists
   block:
     - name: Downloading {{ cassandra_tgz_url }}
       become: true
@@ -73,4 +76,4 @@
   ansible.builtin.template:
     src: '{{ item.f }}.j2'
     dest: '{{ item.d }}/{{ item.f }}'
-    mode: '{{ item.m|default("644") }}'
+    mode: '{{ item.m | default("644") }}'

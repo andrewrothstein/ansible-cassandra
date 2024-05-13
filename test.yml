@@ -1,10 +1,10 @@
 ---
 - hosts: all
   vars:
-    openjdk_ver:
+    temurin_ver:
       major: 11
       minor: 0
-      patch: "15"
-      b: "10"
+      patch: "23"
+      b: "9"
   roles:
     - role: '{{ playbook_dir }}'
