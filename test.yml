@@ -1,10 +1,11 @@
 ---
-- hosts: all
+- name: Testing andrewrothstein.cassandra with temurin:11.0.24+8
+  hosts: all
   vars:
     temurin_ver:
       major: 11
       minor: 0
-      patch: "23"
-      b: "9"
+      patch: "24"
+      b: "8"
   roles:
     - role: '{{ playbook_dir }}'
