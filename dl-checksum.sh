@@ -10,4 +10,4 @@ dl_ver() {
     printf "  '%s': %s:%s\n" $ver $shatype $(curl -sSLf $url | awk '{print $1}')
 }
 
-dl_ver ${1:-5.0.1}
+dl_ver ${1:-5.0.2}
